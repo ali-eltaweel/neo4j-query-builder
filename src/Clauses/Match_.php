@@ -9,9 +9,9 @@ use Stringable;
 
 class Match_ implements Stringable {
 
-    private ?NodeBuilder $node;
+    private array $nodes;
     
-    private ?RelationshipBuilder $relationship;
+    private array $relationships;
 
     public function __construct() {
 
@@ -20,18 +20,18 @@ class Match_ implements Stringable {
 
     public final function __toString(): string {
 
-        return sprintf('MATCH %s', $this->relationship ?? $this->node);
+        return sprintf('MATCH %s', implode(', ', [...$this->relationships, ...$this->nodes]));
     }
 
     public function reset(): void {
 
-        $this->node         = null;
-        $this->relationship = null;
+        $this->nodes         = [];
+        $this->relationships = [];
     }
 
     public final function node(?Closure $callback = null): NodeBuilder {
 
-        $node = $this->node = new NodeBuilder();
+        $node = $this->nodes[] = new NodeBuilder();
 
         if (!is_null($callback)) {
 
@@ -43,7 +43,7 @@ class Match_ implements Stringable {
 
     public final function relationship(?Closure $callback = null): RelationshipBuilder {
 
-        $relationship = $this->relationship = new RelationshipBuilder();
+        $relationship = $this->relationships[] = new RelationshipBuilder();
 
         if (!is_null($callback)) {
 

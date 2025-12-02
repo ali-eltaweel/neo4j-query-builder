@@ -30,6 +30,11 @@ class NodeBuilder implements Stringable {
                 $v = sprintf('"%s"', $v);
             }
 
+            if (is_null($v)) {
+
+                $v = 'null';
+            }
+
             $properties[] = sprintf('%s: %s', $k, $v);
         }
 
