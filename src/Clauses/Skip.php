@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-use Stringable;
-
-class Skip implements Stringable {
+class Skip implements IClause {
 
     private ?int $skip;
     
@@ -21,6 +19,11 @@ class Skip implements Stringable {
     public function reset(): void {
 
         $this->skip = null;
+    }
+
+    public final function getParameters(): array {
+
+        return [];
     }
 
     public final function skip(int $skip): self {

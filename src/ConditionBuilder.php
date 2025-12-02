@@ -2,15 +2,15 @@
 
 namespace Neo4jQueryBuilder;
 
-use Stringable;
-
-class ConditionBuilder implements Stringable {
+class ConditionBuilder extends ParameterGenerator {
 
     private ?string $lhs;
     
     private ?string $operator;
     
     private mixed $rhs;
+    
+    private ?string $rhsParam;
 
     private ?ConditionBuilder $and;
 
@@ -23,20 +23,8 @@ class ConditionBuilder implements Stringable {
 
     public final function __toString(): string {
 
-        $lhs      = $this->lhs;
-        $operator = $this->operator;
-        $rhs      = $this->rhs;
-
-        if (is_string($rhs)) {
-            $rhs = "'" . $rhs . "'";
-        } elseif (is_bool($rhs)) {
-            $rhs = $rhs ? 'true' : 'false';
-        } elseif ($rhs === null) {
-            $rhs = 'null';
-        }
-
         return implode('', [
-            sprintf('%s %s %s', $lhs, $operator, $rhs),
+            sprintf('%s %s %s%s', $this->lhs, $this->operator, is_null($this->rhsParam) ? '' : '$', $this->rhsParam),
             $this->and ? ' AND ' . $this->and : '',
             $this->or  ? ' OR '  . $this->or  : '',
         ]);
@@ -47,8 +35,26 @@ class ConditionBuilder implements Stringable {
         $this->lhs      = null;
         $this->operator = null;
         $this->rhs      = null;
+        $this->rhsParam = null;
         $this->and      = null;
         $this->or       = null;
+    }
+
+    public final function getParameters(): array {
+
+        if (is_null($this->rhsParam)) {
+
+            $parameters = [];
+        } else {
+
+            $parameters = [ $this->rhsParam => $this->rhs ];
+        }
+
+        return array_merge(
+            $parameters,
+            $this->and?->getParameters() ?? [],
+            $this->or?->getParameters() ?? [],
+        );
     }
 
     public final function name(string $lhs): self {
@@ -68,6 +74,7 @@ class ConditionBuilder implements Stringable {
     public final function value(mixed $rhs): self {
 
         $this->rhs = $rhs;
+        $this->rhsParam = static::generateParameterName();
 
         return $this;
     }

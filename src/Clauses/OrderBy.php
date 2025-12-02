@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-use Stringable;
-
-class OrderBy implements Stringable {
+class OrderBy implements IClause {
 
     private array $elements;
 
@@ -24,6 +22,11 @@ class OrderBy implements Stringable {
 
         $this->elements  = [];
         $this->ascending = true;
+    }
+
+    public final function getParameters(): array {
+
+        return [];
     }
 
     public final function elements(string ...$elements): self {

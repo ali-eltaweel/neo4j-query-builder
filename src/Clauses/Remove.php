@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-use Stringable;
-
-class Remove implements Stringable {
+class Remove implements IClause {
 
     private array $expressions;
     
@@ -21,6 +19,11 @@ class Remove implements Stringable {
     public function reset(): void {
 
         $this->expressions = [];
+    }
+
+    public final function getParameters(): array {
+
+        throw new \RuntimeException('Not implemented yet.');
     }
 
     public final function expression(string $expression): self {

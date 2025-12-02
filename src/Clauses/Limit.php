@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-use Stringable;
-
-class Limit implements Stringable {
+class Limit implements IClause {
 
     private ?int $limit;
     
@@ -21,6 +19,11 @@ class Limit implements Stringable {
     public function reset(): void {
 
         $this->limit = null;
+    }
+
+    public final function getParameters(): array {
+
+        return [];
     }
 
     public final function limit(int $limit): self {

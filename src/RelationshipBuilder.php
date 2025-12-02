@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder;
 
-use Stringable;
-
-class RelationshipBuilder implements Stringable {
+class RelationshipBuilder extends ParameterGenerator {
 
     private ?string $alias;
 
@@ -15,6 +13,8 @@ class RelationshipBuilder implements Stringable {
     private array $labels;
     
     private array $properties;
+
+    private array $parameters;
 
     public function __construct() {
 
@@ -28,16 +28,6 @@ class RelationshipBuilder implements Stringable {
         $properties = [];
 
         foreach ($this->properties as $k => $v) {
-
-            if (is_string($v)) {
-
-                $v = sprintf('"%s"', $v);
-            }
-
-            if (is_null($v)) {
-
-                $v = 'null';
-            }
 
             $properties[] = sprintf('%s: %s', $k, $v);
         }
@@ -61,6 +51,12 @@ class RelationshipBuilder implements Stringable {
         $this->toNode     = null;
         $this->labels     = [];
         $this->properties = [];
+        $this->parameters = [];
+    }
+
+    public final function getParameters(): array {
+
+        return $this->parameters;
     }
 
     public final function alias(string $alias): self {
@@ -89,7 +85,10 @@ class RelationshipBuilder implements Stringable {
 
     public final function property(string $key, mixed $value): self {
 
-        $this->properties[$key] = $value;
+        $param = self::generateParameterName();
+
+        $this->properties[$key] = '$' . $param;
+        $this->parameters[$param] = $value;
 
         return $this;
     }
@@ -98,7 +97,7 @@ class RelationshipBuilder implements Stringable {
 
         foreach ($properties as $key => $value) {
 
-            $this->properties[$key] = $value;
+            $this->property($key, $value);
         }
 
         return $this;

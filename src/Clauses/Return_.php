@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-use Stringable;
-
-class Return_ implements Stringable {
+class Return_ implements IClause {
 
     private array $elements;
     
@@ -21,6 +19,11 @@ class Return_ implements Stringable {
     public function reset(): void {
 
         $this->elements = [];
+    }
+
+    public final function getParameters(): array {
+
+        return [];
     }
 
     public final function element(string $alias): self {

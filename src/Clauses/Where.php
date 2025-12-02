@@ -4,10 +4,10 @@ namespace Neo4jQueryBuilder\Clauses;
 
 use Closure;
 use Neo4jQueryBuilder\ConditionBuilder;
-use Stringable;
 
-class Where implements Stringable {
+class Where implements IClause {
 
+    /** @var ConditionBuilder[] */
     private array $conditions;
 
     public function __construct() {
@@ -29,6 +29,15 @@ class Where implements Stringable {
     public function reset(): void {
 
         $this->conditions = [];
+    }
+
+    public final function getParameters(): array {
+
+        return array_reduce(
+            $this->conditions,
+            fn(array $carry, ConditionBuilder $builder) => array_merge($carry, $builder->getParameters()),
+            []
+        );
     }
 
     public final function condition(?Closure $callback = null): ConditionBuilder {

@@ -2,15 +2,15 @@
 
 namespace Neo4jQueryBuilder;
 
-use Stringable;
-
-class NodeBuilder implements Stringable {
+class NodeBuilder extends ParameterGenerator {
 
     private ?string $alias;
     
     private array $labels;
     
     private array $properties;
+    
+    private array $parameters;
 
     public function __construct() {
 
@@ -24,16 +24,6 @@ class NodeBuilder implements Stringable {
         $properties = [];
 
         foreach ($this->properties as $k => $v) {
-
-            if (is_string($v)) {
-
-                $v = sprintf('"%s"', $v);
-            }
-
-            if (is_null($v)) {
-
-                $v = 'null';
-            }
 
             $properties[] = sprintf('%s: %s', $k, $v);
         }
@@ -53,6 +43,12 @@ class NodeBuilder implements Stringable {
         $this->alias      = null;
         $this->labels     = [];
         $this->properties = [];
+        $this->parameters = [];
+    }
+
+    public final function getParameters(): array {
+
+        return $this->parameters;
     }
 
     public final function alias(string $alias): self {
@@ -71,7 +67,10 @@ class NodeBuilder implements Stringable {
 
     public final function property(string $key, mixed $value): self {
 
-        $this->properties[$key] = $value;
+        $param = self::generateParameterName();
+
+        $this->properties[$key] = '$' . $param;
+        $this->parameters[$param] = $value;
 
         return $this;
     }
@@ -80,7 +79,7 @@ class NodeBuilder implements Stringable {
 
         foreach ($properties as $key => $value) {
 
-            $this->properties[$key] = $value;
+            $this->property($key, $value);
         }
 
         return $this;

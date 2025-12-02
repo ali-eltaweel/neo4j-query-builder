@@ -5,10 +5,10 @@ namespace Neo4jQueryBuilder\Clauses;
 use Closure;
 use Neo4jQueryBuilder\NodeBuilder;
 use Neo4jQueryBuilder\RelationshipBuilder;
-use Stringable;
 
-class Create implements Stringable {
+class Create implements IClause {
 
+    /** @var array<NodeBuilder|RelationshipBuilder> */
     private array $elements;
 
     public function __construct() {
@@ -24,6 +24,15 @@ class Create implements Stringable {
     public function reset(): void {
 
         $this->elements = [];
+    }
+
+    public final function getParameters(): array {
+
+        return array_reduce(
+        $this->elements,
+            fn(array $carry, NodeBuilder|RelationshipBuilder $builder) => array_merge($carry, $builder->getParameters()),
+            []
+        );
     }
 
     public final function node(?Closure $callback = null): NodeBuilder {

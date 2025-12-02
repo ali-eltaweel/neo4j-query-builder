@@ -2,9 +2,7 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-use Stringable;
-
-class Delete implements Stringable {
+class Delete implements IClause {
 
     private array $elements;
     
@@ -24,6 +22,11 @@ class Delete implements Stringable {
 
         $this->elements = [];
         $this->detach   = false;
+    }
+
+    public final function getParameters(): array {
+
+        return [];
     }
 
     public final function element(string $alias): self {

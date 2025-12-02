@@ -2,12 +2,15 @@
 
 namespace Neo4jQueryBuilder;
 
+use Neo4jQueryBuilder\Clauses\IClause;
+
 use Closure;
 use Stringable;
 
 class QueryBuilder implements Stringable {
 
-    private array $cluases;
+    /** @var Clauses\IClause[] */
+    private array $clauses;
 
     public function __construct() {
 
@@ -16,17 +19,26 @@ class QueryBuilder implements Stringable {
 
     public final function __toString(): string {
 
-        return implode("\n", $this->cluases);
+        return implode("\n", $this->clauses);
     }
 
     public function reset(): void {
 
-        $this->cluases = [];
+        $this->clauses = [];
+    }
+
+    public final function getParameters(): array {
+
+        return array_reduce(
+            $this->clauses,
+            fn(array $carry, IClause $clause) => array_merge($carry, $clause->getParameters()),
+            []
+        );
     }
 
     public final function create(?Closure $callback = null): Clauses\Create {
 
-        $create = $this->cluases[] = new Clauses\Create();
+        $create = $this->clauses[] = new Clauses\Create();
 
         if (!is_null($callback)) {
 
@@ -38,7 +50,7 @@ class QueryBuilder implements Stringable {
 
     public final function delete(?Closure $callback = null): Clauses\Delete {
 
-        $delete = $this->cluases[] = new Clauses\Delete();
+        $delete = $this->clauses[] = new Clauses\Delete();
 
         if (!is_null($callback)) {
 
@@ -50,7 +62,7 @@ class QueryBuilder implements Stringable {
 
     public final function match(?Closure $callback = null): Clauses\Match_ {
 
-        $match = $this->cluases[] = new Clauses\Match_();
+        $match = $this->clauses[] = new Clauses\Match_();
 
         if (!is_null($callback)) {
 
@@ -62,7 +74,7 @@ class QueryBuilder implements Stringable {
 
     public final function where(?Closure $callback = null): Clauses\Where {
 
-        $where = $this->cluases[] = new Clauses\Where();
+        $where = $this->clauses[] = new Clauses\Where();
 
         if (!is_null($callback)) {
 
@@ -74,7 +86,7 @@ class QueryBuilder implements Stringable {
 
     public final function return(?Closure $callback = null): Clauses\Return_ {
 
-        $return = $this->cluases[] = new Clauses\Return_();
+        $return = $this->clauses[] = new Clauses\Return_();
 
         if (!is_null($callback)) {
 
@@ -86,7 +98,7 @@ class QueryBuilder implements Stringable {
 
     public final function orderBy(?Closure $callback = null): Clauses\OrderBy {
 
-        $orderBy = $this->cluases[] = new Clauses\OrderBy();
+        $orderBy = $this->clauses[] = new Clauses\OrderBy();
 
         if (!is_null($callback)) {
 
@@ -98,7 +110,7 @@ class QueryBuilder implements Stringable {
 
     public final function set(?Closure $callback = null): Clauses\Set {
 
-        $set = $this->cluases[] = new Clauses\Set();
+        $set = $this->clauses[] = new Clauses\Set();
 
         if (!is_null($callback)) {
 
@@ -110,7 +122,7 @@ class QueryBuilder implements Stringable {
 
     public final function remove(?Closure $callback = null): Clauses\Remove {
 
-        $remove = $this->cluases[] = new Clauses\Remove();
+        $remove = $this->clauses[] = new Clauses\Remove();
 
         if (!is_null($callback)) {
 
@@ -122,14 +134,14 @@ class QueryBuilder implements Stringable {
 
     public final function limit(int $limit): self {
 
-        $this->cluases[] = (new Clauses\Limit())->limit($limit);
+        $this->clauses[] = (new Clauses\Limit())->limit($limit);
 
         return $this;
     }
 
     public final function skip(int $skip): self {
 
-        $this->cluases[] = (new Clauses\Skip())->skip($skip);
+        $this->clauses[] = (new Clauses\Skip())->skip($skip);
 
         return $this;
     }

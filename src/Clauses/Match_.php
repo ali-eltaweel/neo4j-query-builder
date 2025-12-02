@@ -5,9 +5,8 @@ namespace Neo4jQueryBuilder\Clauses;
 use Closure;
 use Neo4jQueryBuilder\NodeBuilder;
 use Neo4jQueryBuilder\RelationshipBuilder;
-use Stringable;
 
-class Match_ implements Stringable {
+class Match_ implements IClause {
 
     private array $nodes;
     
@@ -27,6 +26,15 @@ class Match_ implements Stringable {
 
         $this->nodes         = [];
         $this->relationships = [];
+    }
+
+    public final function getParameters(): array {
+
+        return array_reduce(
+            [ ...$this->nodes, ...$this->relationships ],
+            fn(array $carry, NodeBuilder|RelationshipBuilder $builder) => array_merge($carry, $builder->getParameters()),
+            []
+        );
     }
 
     public final function node(?Closure $callback = null): NodeBuilder {
