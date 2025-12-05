@@ -2,10 +2,13 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\Expressions\Expression;
+use Neo4jQueryBuilder\Expressions\PropertySet;
+
 class Set implements IClause {
 
     private array $expressions;
-    
+
     public function __construct() {
 
         $this->reset();
@@ -23,23 +26,23 @@ class Set implements IClause {
 
     public final function getParameters(): array {
 
-        throw new \RuntimeException('Not implemented yet.');
+        return array_merge(
+            ...array_map(
+                fn (string|Expression $e) => is_string($e) ? [] : $e->getParameters(),
+                $this->expressions
+            )
+        );
     }
 
-    public final function expression(string $expression): self {
+    public final function rawExpression(string $expression): self {
 
         $this->expressions[] = $expression;
 
         return $this;
     }
 
-    public final function expressions(array $expressions): self {
+    public final function property(): PropertySet {
 
-        foreach ($expressions as $expression) {
-
-            $this->expressions[] = $expression;
-        }
-
-        return $this;
+        return $this->expressions[] = new PropertySet();
     }
 }
