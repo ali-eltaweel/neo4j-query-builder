@@ -145,4 +145,16 @@ class QueryBuilder implements Stringable {
 
         return $this;
     }
+
+    public final function with(?Closure $callback = null): Clauses\With {
+
+        $with = $this->clauses[] = new Clauses\With();
+
+        if (!is_null($callback)) {
+
+            $callback($with);
+        }
+
+        return $with;
+    }
 }

@@ -2,11 +2,9 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
-class Return_ implements IClause {
+class With implements IClause {
 
     private array $elements;
-
-    private bool $distinct;
     
     public function __construct() {
 
@@ -15,15 +13,12 @@ class Return_ implements IClause {
 
     public final function __toString(): string {
 
-        $distinct = $this->distinct ? 'DISTINCT ' : '';
-
-        return sprintf('RETURN %s%s', $distinct, implode(', ', $this->elements));
+        return sprintf('WITH %s', implode(', ', $this->elements));
     }
 
     public function reset(): void {
 
         $this->elements = [];
-        $this->distinct = false;
     }
 
     public final function getParameters(): array {
@@ -44,13 +39,6 @@ class Return_ implements IClause {
 
             $this->elements[] = $alias;
         }
-
-        return $this;
-    }
-
-    public final function distinct(bool $distinct = true): self {
-
-        $this->distinct = $distinct;
 
         return $this;
     }
