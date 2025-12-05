@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class Remove implements IClause {
+
+    use HasParameters;
 
     private array $expressions;
     
@@ -19,11 +23,12 @@ class Remove implements IClause {
     public function reset(): void {
 
         $this->expressions = [];
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
 
-        throw new \RuntimeException('Not implemented yet.');
+        return $this->parameters;
     }
 
     public final function expression(string $expression): self {

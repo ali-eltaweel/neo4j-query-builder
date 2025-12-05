@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class Return_ implements IClause {
+
+    use HasParameters;
 
     private array $elements;
 
@@ -24,11 +28,12 @@ class Return_ implements IClause {
 
         $this->elements = [];
         $this->distinct = false;
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
 
-        return [];
+        return $this->parameters;
     }
 
     public final function element(string $alias): self {

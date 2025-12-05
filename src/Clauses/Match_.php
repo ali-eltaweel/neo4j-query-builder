@@ -3,10 +3,13 @@
 namespace Neo4jQueryBuilder\Clauses;
 
 use Closure;
+use Neo4jQueryBuilder\HasParameters;
 use Neo4jQueryBuilder\NodeBuilder;
 use Neo4jQueryBuilder\RelationshipBuilder;
 
 class Match_ implements IClause {
+
+    use HasParameters;
 
     private array $nodes;
     
@@ -26,6 +29,7 @@ class Match_ implements IClause {
 
         $this->nodes         = [];
         $this->relationships = [];
+        $this->parameters    = [];
     }
 
     public final function getParameters(): array {
@@ -33,7 +37,7 @@ class Match_ implements IClause {
         return array_reduce(
             [ ...$this->nodes, ...$this->relationships ],
             fn(array $carry, NodeBuilder|RelationshipBuilder $builder) => array_merge($carry, $builder->getParameters()),
-            []
+            $this->parameters
         );
     }
 

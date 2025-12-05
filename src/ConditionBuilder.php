@@ -4,6 +4,8 @@ namespace Neo4jQueryBuilder;
 
 class ConditionBuilder extends ParameterGenerator {
 
+    use HasParameters;
+
     private ?string $lhs;
     
     private ?string $operator;
@@ -32,12 +34,13 @@ class ConditionBuilder extends ParameterGenerator {
 
     public function reset(): void {
 
-        $this->lhs      = null;
-        $this->operator = null;
-        $this->rhs      = null;
-        $this->rhsParam = null;
-        $this->and      = null;
-        $this->or       = null;
+        $this->lhs        = null;
+        $this->operator   = null;
+        $this->rhs        = null;
+        $this->rhsParam   = null;
+        $this->and        = null;
+        $this->or         = null;
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
@@ -51,6 +54,7 @@ class ConditionBuilder extends ParameterGenerator {
         }
 
         return array_merge(
+            $this->parameters,
             $parameters,
             $this->and?->getParameters() ?? [],
             $this->or?->getParameters() ?? [],

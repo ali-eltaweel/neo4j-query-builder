@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class Delete implements IClause {
+
+    use HasParameters;
 
     private array $elements;
     
@@ -20,13 +24,14 @@ class Delete implements IClause {
 
     public function reset(): void {
 
-        $this->elements = [];
-        $this->detach   = false;
+        $this->elements   = [];
+        $this->detach     = false;
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
 
-        return [];
+        return $this->parameters;
     }
 
     public final function element(string $alias): self {

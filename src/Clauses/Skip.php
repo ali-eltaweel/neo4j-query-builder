@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class Skip implements IClause {
+
+    use HasParameters;
 
     private ?int $skip;
     
@@ -18,12 +22,13 @@ class Skip implements IClause {
 
     public function reset(): void {
 
-        $this->skip = null;
+        $this->skip       = null;
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
 
-        return [];
+        return $this->parameters;
     }
 
     public final function skip(int $skip): self {

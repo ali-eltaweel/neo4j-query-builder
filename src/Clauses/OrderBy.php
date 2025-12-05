@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class OrderBy implements IClause {
+
+    use HasParameters;
 
     private array $elements;
 
@@ -22,11 +26,12 @@ class OrderBy implements IClause {
 
         $this->elements  = [];
         $this->ascending = true;
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
 
-        return [];
+        return $this->parameters;
     }
 
     public final function elements(string ...$elements): self {

@@ -9,6 +9,8 @@ use Stringable;
 
 class QueryBuilder implements Stringable {
 
+    use HasParameters;
+
     /** @var Clauses\IClause[] */
     private array $clauses;
 
@@ -24,7 +26,8 @@ class QueryBuilder implements Stringable {
 
     public function reset(): void {
 
-        $this->clauses = [];
+        $this->clauses    = [];
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
@@ -32,7 +35,7 @@ class QueryBuilder implements Stringable {
         return array_reduce(
             $this->clauses,
             fn(array $carry, IClause $clause) => array_merge($carry, $clause->getParameters()),
-            []
+            $this->parameters
         );
     }
 

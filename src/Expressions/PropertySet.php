@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Expressions;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class PropertySet extends Expression {
+
+    use HasParameters;
 
     private ?string $property;
     
@@ -25,14 +29,15 @@ class PropertySet extends Expression {
     public final function getParameters(): array {
 
         return is_null($this->valueParameter)
-            ? []
-            : [ $this->valueParameter => $this->value ];
+            ? $this->parameters
+            : [ ...$this->parameters, $this->valueParameter => $this->value ];
     }
     
     public final function reset(): void {
 
-        $this->property = null;
-        $this->value    = null;
+        $this->property   = null;
+        $this->value      = null;
+        $this->parameters = [];
     }
 
     public final function name(string $property): self {

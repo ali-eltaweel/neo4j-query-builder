@@ -4,13 +4,13 @@ namespace Neo4jQueryBuilder;
 
 class NodeBuilder extends ParameterGenerator {
 
+    use HasParameters;
+
     private ?string $alias;
     
     private array $labels;
     
     private array $properties;
-    
-    private array $parameters;
 
     public function __construct() {
 
@@ -67,10 +67,9 @@ class NodeBuilder extends ParameterGenerator {
 
     public final function property(string $key, mixed $value): self {
 
-        $param = self::generateParameterName();
+        $this->addParameter($param = self::generateParameterName(), $value);
 
         $this->properties[$key] = '$' . $param;
-        $this->parameters[$param] = $value;
 
         return $this;
     }

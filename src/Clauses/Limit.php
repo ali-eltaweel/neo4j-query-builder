@@ -2,7 +2,11 @@
 
 namespace Neo4jQueryBuilder\Clauses;
 
+use Neo4jQueryBuilder\HasParameters;
+
 class Limit implements IClause {
+
+    use HasParameters;
 
     private ?int $limit;
     
@@ -18,12 +22,13 @@ class Limit implements IClause {
 
     public function reset(): void {
 
-        $this->limit = null;
+        $this->limit      = null;
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
 
-        return [];
+        return $this->parameters;
     }
 
     public final function limit(int $limit): self {

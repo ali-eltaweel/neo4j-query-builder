@@ -4,8 +4,11 @@ namespace Neo4jQueryBuilder\Clauses;
 
 use Neo4jQueryBuilder\Expressions\Expression;
 use Neo4jQueryBuilder\Expressions\PropertySet;
+use Neo4jQueryBuilder\HasParameters;
 
 class Set implements IClause {
+
+    use HasParameters;
 
     private array $expressions;
 
@@ -22,11 +25,13 @@ class Set implements IClause {
     public function reset(): void {
 
         $this->expressions = [];
+        $this->parameters  = [];
     }
 
     public final function getParameters(): array {
 
         return array_merge(
+            $this->parameters,
             ...array_map(
                 fn (string|Expression $e) => is_string($e) ? [] : $e->getParameters(),
                 $this->expressions

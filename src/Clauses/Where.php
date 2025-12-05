@@ -4,8 +4,11 @@ namespace Neo4jQueryBuilder\Clauses;
 
 use Closure;
 use Neo4jQueryBuilder\ConditionBuilder;
+use Neo4jQueryBuilder\HasParameters;
 
 class Where implements IClause {
+
+    use HasParameters;
 
     /** @var ConditionBuilder[] */
     private array $conditions;
@@ -29,6 +32,7 @@ class Where implements IClause {
     public function reset(): void {
 
         $this->conditions = [];
+        $this->parameters = [];
     }
 
     public final function getParameters(): array {
@@ -36,7 +40,7 @@ class Where implements IClause {
         return array_reduce(
             $this->conditions,
             fn(array $carry, ConditionBuilder $builder) => array_merge($carry, $builder->getParameters()),
-            []
+            $this->parameters
         );
     }
 
