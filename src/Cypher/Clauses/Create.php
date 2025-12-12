@@ -2,37 +2,37 @@
 
 namespace Neo4jQueryBuilder\Cypher\Clauses;
 
-use Neo4jQueryBuilder\Cypher\Node;
+use Neo4jQueryBuilder\Cypher\{ Node, Relationship };
 
 final class Create extends Clause {
 
-    /** @var Node[] */
-    private array $elements;
+    /** @var array<Node|Relationship> */
+    private array $ditems;
 
     public final function __construct() {
 
         parent::__construct();
 
-        $this->elements = [];
+        $this->ditems = [];
     }
 
     public final function getQueryString(): string {
 
-        return sprintf('CREATE %s', implode(', ', $this->elements));
+        return sprintf('CREATE %s', implode(', ', $this->ditems));
     }
 
     public final function getParameters(): array {
 
         return array_reduce(
-            $this->elements,
-            fn (array $parameters, Node $element) => array_merge($parameters, $element->getParameters()),
+            $this->ditems,
+            fn (array $parameters, Node|Relationship $element) => array_merge($parameters, $element->getParameters()),
             parent::getParameters()
         );
     }
 
-    public final function addElement(Node $element): self {
+    public final function addItem(Node|Relationship $item): self {
 
-        $this->elements[] = $element;
+        $this->ditems[] = $item;
 
         return $this;
     }
