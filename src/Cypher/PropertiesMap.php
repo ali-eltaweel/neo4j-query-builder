@@ -6,6 +6,8 @@ final class PropertiesMap extends Cypher {
 
     private array $properties;
 
+    private string $mapParameter;
+
     public final function __construct(array $properties = []) {
 
         parent::__construct();
@@ -13,9 +15,16 @@ final class PropertiesMap extends Cypher {
         $this->properties = [];
 
         $this->addAll($properties);
+
+        $this->mapParameter = self::newParameter();
     }
 
     public final function getQueryString(): string {
+
+        if (!$this->hasRawCypher()) {
+
+            return sprintf('$%s', $this->mapParameter);
+        }
 
         if (empty($this->properties)) {
 
@@ -26,7 +35,7 @@ final class PropertiesMap extends Cypher {
 
         foreach ($this->properties as $k => $v) {
 
-            $properties[] = sprintf('%s: %s', $k, $v);
+            $properties[] = sprintf('%s: %s', $k, $v instanceof RawCypher ? $v : "\${$v}");
         }
 
         $properties = implode(', ', $properties);
@@ -35,6 +44,15 @@ final class PropertiesMap extends Cypher {
     }
 
     public final function getParameters(): array {
+
+        if (!$this->hasRawCypher()) {
+
+            $params = parent::getParameters();
+
+            return [
+                $this->mapParameter => array_map(fn (string $param) => $params[$param], $this->properties)
+            ];
+        }
 
         return array_reduce(
             $this->properties,
@@ -68,5 +86,18 @@ final class PropertiesMap extends Cypher {
         }
 
         return $this;
+    }
+
+    public final function hasRawCypher(): bool {
+
+        foreach ($this->properties as $value) {
+
+            if ($value instanceof RawCypher) {
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }
