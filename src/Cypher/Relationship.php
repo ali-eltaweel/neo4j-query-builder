@@ -12,7 +12,8 @@ final class Relationship extends Cypher {
         private ?string $alias       = null,
         private array   $labels      = [],
                 array   $properties  = [],
-        private bool    $leftToRight = true
+        private bool    $directed    = true,
+        private bool    $leftToRight = true,
     ) {
 
         parent::__construct();
@@ -34,7 +35,20 @@ final class Relationship extends Cypher {
             $relationship .= " {$properties}";
         }
 
-        return $this->left . sprintf($this->leftToRight ? '-[%s]->' : '<-[%s]-', $relationship) . $this->right;
+        $format = '-[%s]-';
+
+        if ($this->directed) {
+
+            if ($this->leftToRight) {
+
+                $format .= '>';
+            } else {
+
+                $format = '<' . $format;
+            }
+        }
+
+        return $this->left . sprintf($format, $relationship) . $this->right;
     }
 
     public final function getParameters(): array {
@@ -74,5 +88,17 @@ final class Relationship extends Cypher {
     public final function rightToLeft(): self {
 
         return $this->leftToRight(false);
+    }
+
+    public final function directed(bool $value = true): self {
+
+        $this->directed = $value;
+
+        return $this;
+    }
+
+    public final function undirected(): self {
+
+        return $this->directed(false);
     }
 }

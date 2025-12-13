@@ -4,7 +4,7 @@ namespace Neo4jQueryBuilder\Cypher\Clauses;
 
 use Neo4jQueryBuilder\Cypher\{ Node, Relationship };
 
-final class Create extends Clause {
+final class Match_ extends Clause {
 
     /** @var array<Node|Relationship> */
     private array $items;
@@ -18,7 +18,7 @@ final class Create extends Clause {
 
     public final function getQueryString(): string {
 
-        return sprintf('CREATE %s', implode(', ', $this->items));
+        return sprintf('MATCH %s', implode(', ', $this->items));
     }
 
     public final function getParameters(): array {

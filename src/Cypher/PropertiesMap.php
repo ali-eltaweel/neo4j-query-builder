@@ -21,6 +21,11 @@ final class PropertiesMap extends Cypher {
 
     public final function getQueryString(): string {
 
+        if (empty($this->properties)) {
+
+            return '';
+        }
+
         if (!$this->hasRawCypher()) {
 
             return sprintf('$%s', $this->mapParameter);
@@ -44,6 +49,11 @@ final class PropertiesMap extends Cypher {
     }
 
     public final function getParameters(): array {
+
+        if (empty($this->properties)) {
+
+            return parent::getParameters();
+        }
 
         if (!$this->hasRawCypher()) {
 
