@@ -9,7 +9,7 @@ final class Match_ extends Clause {
     /** @var array<Node|Relationship> */
     private array $items;
 
-    public final function __construct() {
+    public final function __construct(private bool $optional = false) {
 
         parent::__construct();
 
@@ -18,7 +18,7 @@ final class Match_ extends Clause {
 
     public final function getQueryString(): string {
 
-        return sprintf('MATCH %s', implode(', ', $this->items));
+        return sprintf('%sMATCH %s', $this->optional ? 'OPTIONAL ' : '', implode(', ', $this->items));
     }
 
     public final function getParameters(): array {
@@ -33,6 +33,13 @@ final class Match_ extends Clause {
     public final function addItem(Node|Relationship $item): self {
 
         $this->items[] = $item;
+
+        return $this;
+    }
+
+    public final function optional(bool $value = true): self {
+
+        $this->optional = $value;
 
         return $this;
     }
