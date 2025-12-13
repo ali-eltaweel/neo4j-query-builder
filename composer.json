@@ -1,6 +1,6 @@
 {
     "name": "ali-eltaweel/neo4j-query-builder",
-    "version": "1.17.0",
+    "version": "2.0.0",
     "description": "Neo4j Query Builder for PHP",
     "maintainers": [
         {
