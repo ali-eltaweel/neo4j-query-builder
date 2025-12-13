@@ -23,7 +23,7 @@ final class PropertiesMap extends Cypher {
 
         if (empty($this->properties)) {
 
-            return '';
+            return '{}';
         }
 
         if (!$this->hasRawCypher()) {
