@@ -24,7 +24,7 @@ final class Delete extends Clause {
 
     public final function getQueryString(): string {
 
-        return sprintf('DELETE%s %s', $this->detach ? ' DETACH' : '', implode(', ', $this->items));
+        return sprintf('%sDELETE %s', $this->detach ? 'DETACH ' : '', implode(', ', $this->items));
     }
 
     public final function addItem(string $item): self {
